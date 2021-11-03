@@ -1,0 +1,5 @@
+export enum ConfigKeys {
+  DISCORD_BOT_TOKEN = "DISCORD_BOT_TOKEN",
+  RIOT_API_KEY = "RIOT_API_KEY",
+  RIOT_API_URL = "RIOT_API_URL",
+}

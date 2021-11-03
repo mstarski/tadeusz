@@ -4,12 +4,17 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "tsc-watch --project tsconfig.json --outfile dist/main.js --onSuccess 'node dist/main.js'"
+    "start": "tsc-watch --project tsconfig.json --onSuccess 'node dist/main.js'"
   },
   "dependencies": {
-    "dotenv": "^10.0.0"
+    "axios": "^0.24.0",
+    "discord.js": "^13.3.1",
+    "dotenv": "^10.0.0",
+    "ramda": "^0.27.1"
   },
   "devDependencies": {
+    "@types/node": "^16.11.6",
+    "@types/ramda": "^0.27.46",
     "prettier": "^2.4.1",
     "tsc-watch": "^4.5.0",
     "typescript": "^4.4.4"

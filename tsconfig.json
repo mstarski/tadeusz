@@ -6,7 +6,9 @@
 
   "compilerOptions": {
     "target": "es5",
-    "sourceMap": true
+    "sourceMap": true,
+    "module": "commonjs",
+    "outDir": "dist"
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]
