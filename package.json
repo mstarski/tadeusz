@@ -1,0 +1,17 @@
+{
+  "name": "tadeusz",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "tsc-watch --project tsconfig.json --outfile dist/main.js --onSuccess 'node dist/main.js'"
+  },
+  "dependencies": {
+    "dotenv": "^10.0.0"
+  },
+  "devDependencies": {
+    "prettier": "^2.4.1",
+    "tsc-watch": "^4.5.0",
+    "typescript": "^4.4.4"
+  }
+}
