@@ -1,10 +1,20 @@
-import { bootstrap } from "./bootstrap";
-import { isIngame } from "./riot/is-ingame";
+import { bootstrap, deploySlashCommands } from "./bootstrap";
+import { logger } from "./common/logger";
+import { chatController } from "./controllers/chat.controller";
+import { interactionsController } from "./controllers/interactions.controller";
+
 require("dotenv").config();
 
-bootstrap()
-  .then((client) =>
-    client.once("ready", () => console.log(`Logged in as ${client.user.tag}`))
-  )
-  .then(() => isIngame())
-  .then((val) => console.log(val));
+logger.info("Bootstraping application...");
+
+const main = async () => {
+  deploySlashCommands();
+  const client = await bootstrap();
+
+  client.on("messageCreate", (msg) => chatController(msg));
+  client.on("interactionCreate", (interaction) =>
+    interactionsController(interaction)
+  );
+};
+
+void main();

@@ -1,15 +1,16 @@
 import { riotHttp } from "../common/http";
-import { pipeP } from "ramda";
+import { pipeP, tryCatch } from "ramda";
+import { ICurrentGameInfo } from "../typedefs/riot.types";
 
-const nickname = "FPXD xiaolmao";
+const getGameHttp = (summonerId: string): Promise<ICurrentGameInfo> =>
+  tryCatch(
+    (response) => response.data,
+    () => null
+  )(
+    riotHttp().get<ICurrentGameInfo>(
+      `/spectator/v4/active-games/by-summoner/${summonerId}`
+    )
+  );
 
-export const isIngame = () =>
-  pipeP<void, any, any, any, any>(
-    () => riotHttp().get(`/summoner/v4/summoners/by-name/${nickname}`),
-    (response) => response.data.id,
-    (id) =>
-      riotHttp()
-        .get(`/spectator/v4/active-games/by-summoner/${id}`)
-        .catch((e) => e.response),
-    (response) => response.data
-  )();
+export const isIngame = (summonerId: string) =>
+  pipeP<string, ICurrentGameInfo>(getGameHttp)(summonerId);
