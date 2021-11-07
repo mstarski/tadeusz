@@ -12,5 +12,4 @@ const getGameHttp = (summonerId: string): Promise<ICurrentGameInfo> =>
     )
   );
 
-export const isIngame = (summonerId: string) =>
-  pipeP<string, ICurrentGameInfo>(getGameHttp)(summonerId);
+export const isIngame = (summonerId: string) => pipeP(getGameHttp)(summonerId);

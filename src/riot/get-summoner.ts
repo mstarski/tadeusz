@@ -7,5 +7,4 @@ const getSummonerHttp = (ign: string) =>
     () => null
   )(() => riotHttp().get(`/summoner/v4/summoners/by-name/${ign}`));
 
-export const getSummoner = (ign: string) =>
-  pipeP<string, string>(getSummonerHttp)(ign);
+export const getSummoner = (ign: string) => pipeP(getSummonerHttp)(ign);

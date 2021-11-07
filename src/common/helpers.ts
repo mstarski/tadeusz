@@ -1,4 +1,3 @@
 import { pipe } from "ramda";
 
-export const log = <T>(val: T) =>
-  pipe<any, any, T>(console.log, () => val)(val);
+export const log = <T>(val: T) => pipe<T, void, T>(console.log, () => val)(val);

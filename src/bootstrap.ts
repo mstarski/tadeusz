@@ -10,20 +10,21 @@ import { logger } from "./common/logger";
 const getDiscordRESTClient = () =>
   new REST({ version: "9" }).setToken(config(ConfigKeys.DISCORD_BOT_TOKEN));
 
+export const sendCommandsRequest = (restClient: typeof REST) =>
+  restClient.put(
+    Routes.applicationCommands(config(ConfigKeys.DISCORD_CLIENT_ID)),
+    {
+      body: slashCommands,
+    }
+  );
+
 export const setUpSlashCommands = (restClient: typeof REST) =>
   tryCatch(
     (_) => logger.info("Successfully reloaded application (/) commands."),
     (error) => console.error(error)
-  )(() =>
-    restClient.put(
-      Routes.applicationCommands(config(ConfigKeys.DISCORD_CLIENT_ID)),
-      {
-        body: slashCommands,
-      }
-    )
-  );
+  )(() => sendCommandsRequest(restClient));
 
-const generateDiscordClient = async () =>
+const generateDiscordClient = async (_: void) =>
   new Client({
     intents: [
       Intents.FLAGS.GUILDS,
@@ -47,7 +48,7 @@ export const deploySlashCommands = pipe(
   setUpSlashCommands
 );
 
-export const bootstrap = pipeP<void, Client, Client, Client>(
+export const bootstrap = pipeP(
   generateDiscordClient,
   handleReadyState,
   loginToDiscord

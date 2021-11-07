@@ -12,6 +12,7 @@ const main = async () => {
   const client = await bootstrap();
 
   client.on("messageCreate", (msg) => chatController(msg));
+
   client.on("interactionCreate", (interaction) =>
     interactionsController(interaction)
   );
