@@ -1,7 +1,7 @@
 import { bootstrap, deploySlashCommands } from "./bootstrap";
 import { logger } from "./common/logger";
-import { chatController } from "./controllers/chat.controller";
 import { interactionsController } from "./controllers/interactions.controller";
+import { CommandInteraction } from "discord.js";
 
 require("dotenv").config();
 
@@ -11,9 +11,7 @@ const main = async () => {
   deploySlashCommands();
   const client = await bootstrap();
 
-  client.on("messageCreate", (msg) => chatController(msg));
-
-  client.on("interactionCreate", (interaction) =>
+  client.on("interactionCreate", (interaction: CommandInteraction) =>
     interactionsController(interaction)
   );
 };

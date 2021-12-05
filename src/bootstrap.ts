@@ -4,7 +4,7 @@ const { Routes } = require("discord-api-types/v9");
 import { config } from "./common/config";
 import { ConfigKeys } from "./typedefs/config.types";
 import { pipe, pipeP, tryCatch } from "ramda";
-import { slashCommands } from "./slash-commands";
+import { slashCommands } from "./slash-commands/definitions";
 import { logger } from "./common/logger";
 
 const getDiscordRESTClient = () =>
@@ -12,7 +12,10 @@ const getDiscordRESTClient = () =>
 
 export const sendCommandsRequest = (restClient: typeof REST) =>
   restClient.put(
-    Routes.applicationCommands(config(ConfigKeys.DISCORD_CLIENT_ID)),
+    Routes.applicationGuildCommands(
+      config(ConfigKeys.DISCORD_CLIENT_ID),
+      config(ConfigKeys.DISCORD_GUILD_ID)
+    ),
     {
       body: slashCommands,
     }
