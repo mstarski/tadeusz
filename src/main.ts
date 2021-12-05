@@ -1,19 +1,35 @@
-import { bootstrap, deploySlashCommands } from "./bootstrap";
-import { logger } from "./common/logger";
-import { interactionsController } from "./controllers/interactions.controller";
+// Require the necessary discord.js classes
+import config from "./utils/config";
 import { CommandInteraction } from "discord.js";
+import { SlashCommandsController } from "./slash-commands/slash-commands-controller";
+import { PlayCommand } from "./slash-commands/cmd/play";
 
-require("dotenv").config();
+const { Client, Intents } = require("discord.js");
 
-logger.info("Bootstraping application...");
+// Create a new client instance
+const client = new Client({
+  intents: [
+    Intents.FLAGS.GUILD_MESSAGES,
+    Intents.FLAGS.GUILD_MEMBERS,
+    Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
+    Intents.FLAGS.GUILDS,
+    Intents.FLAGS.GUILD_VOICE_STATES,
+  ],
+});
 
-const main = async () => {
-  deploySlashCommands();
-  const client = await bootstrap();
+// Create controllers
+const slashCommandsController = new SlashCommandsController(new PlayCommand());
 
-  client.on("interactionCreate", (interaction: CommandInteraction) =>
-    interactionsController(interaction)
-  );
-};
+// When the client is ready, run this code (only once)
+client.once("ready", (client) => {
+  console.log(`Tadeusz is ready as ${client.user.tag} uwu.`);
+});
 
-void main();
+client.on(
+  "interactionCreate",
+  async (interaction: CommandInteraction) =>
+    await slashCommandsController.handleInteractions(interaction)
+);
+
+// Login to Discord with your client's token
+void client.login(config.DISCORD_BOT_TOKEN);
