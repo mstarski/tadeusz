@@ -1,4 +1,4 @@
-import { SlashCommand } from "../slash-command";
+import { ISlashCommandOption, SlashCommand } from "../slash-command";
 import { CommandInteraction, GuildMember } from "discord.js";
 
 const {
@@ -11,7 +11,19 @@ const {
 const ytdl = require("ytdl-core-discord");
 
 export class PlayCommand extends SlashCommand {
-  async execute(interaction: CommandInteraction) {
+  constructor() {
+    const options: ISlashCommandOption[] = [
+      {
+        name: "link",
+        description: "Link do muzyczki",
+        required: true,
+      },
+    ];
+
+    super("jebnij", "Jebnij muzyczką", options);
+  }
+
+  async execute(interaction: CommandInteraction): Promise<void> {
     const member = interaction.member as GuildMember;
 
     const connection = joinVoiceChannel({

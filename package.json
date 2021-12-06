@@ -6,7 +6,6 @@
   "scripts": {
     "build": "tsc --project tsconfig.json",
     "start": "tsc-watch --project tsconfig.json --onSuccess 'node dist/main.js'",
-    "deploy-commands": "yarn build && node dist/scripts/deploy-commands.js",
     "test": "jest"
   },
   "dependencies": {

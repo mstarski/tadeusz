@@ -1,8 +1,11 @@
 // Require the necessary discord.js classes
 import config from "./utils/config";
-import { CommandInteraction } from "discord.js";
-import { SlashCommandsController } from "./slash-commands/slash-commands-controller";
-import { PlayCommand } from "./slash-commands/cmd/play";
+
+// noinspection ES6UnusedImports
+import AppModule from "./app.module";
+
+import { SlashCommandsController } from "./slash-commands/slash-commands.controller";
+import { HelloController } from "./hello/hello.controller";
 
 const { Client, Intents } = require("discord.js");
 
@@ -18,18 +21,17 @@ const client = new Client({
 });
 
 // Create controllers
-const slashCommandsController = new SlashCommandsController(new PlayCommand());
-
-// When the client is ready, run this code (only once)
-client.once("ready", (client) => {
-  console.log(`Tadeusz is ready as ${client.user.tag} uwu.`);
+new HelloController({
+  client,
+  mode: "once",
+  event: "ready",
 });
 
-client.on(
-  "interactionCreate",
-  async (interaction: CommandInteraction) =>
-    await slashCommandsController.handleInteractions(interaction)
-);
+new SlashCommandsController({
+  client,
+  mode: "on",
+  event: "interactionCreate",
+});
 
 // Login to Discord with your client's token
 void client.login(config.DISCORD_BOT_TOKEN);
