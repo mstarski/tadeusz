@@ -1,7 +1,8 @@
 import { joinVoiceChannel, VoiceConnection } from "@discordjs/voice";
 import { InternalDiscordGatewayAdapterCreator } from "discord.js";
+import { YoutubeService } from "./youtube.service";
 
-class MusicService {
+export class MusicPlayerService {
   private readonly queue = [];
 
   private connection: VoiceConnection;
@@ -9,11 +10,19 @@ class MusicService {
   private guildId: string;
   private adapterCreator: InternalDiscordGatewayAdapterCreator;
 
-  play() {}
+  constructor(private readonly youtubeService: YoutubeService) {}
 
-  stop() {}
+  async play(url: string) {}
 
-  skip() {}
+  async stop() {}
+
+  async skip() {}
+
+  getQueue() {
+    return Object.freeze(this.queue);
+  }
+
+  private enqueueSong(): void {}
 
   private connectToVoiceChat(
     channelId: string,
