@@ -50,10 +50,7 @@ describe("Music player functionalities", () => {
   });
 
   describe("Stopping music", () => {
-    it.todo("should stop playing current song", async () => {
-      await musicPlayer.play(sampleSongLink);
-      await musicPlayer.stop();
-    });
+    it.todo("should stop playing current song");
 
     it("should not dequeue current song", async () => {
       await musicPlayer.play(sampleSongLink);
@@ -64,10 +61,7 @@ describe("Music player functionalities", () => {
   });
 
   describe("Skipping music", () => {
-    it.todo("should stop current song", async () => {
-      await musicPlayer.play(sampleSongLink);
-      await musicPlayer.skip();
-    });
+    it.todo("should stop current song");
 
     it("should dequeue current song", async () => {
       await musicPlayer.play(sampleSongLink);
