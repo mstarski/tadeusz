@@ -12,10 +12,8 @@ export class SlashCommandsRepository {
     return this.getCommands().map(([_, value]) => value.body);
   }
 
-  public add(commands: SlashCommand[]): void {
-    commands.forEach((command) => {
-      this.commands.set(command.constructor, command);
-    });
+  public add(command: SlashCommand): void {
+    this.commands.set(command.constructor, command);
   }
 
   public findByToken(token: IsClass<SlashCommand>): SlashCommand {

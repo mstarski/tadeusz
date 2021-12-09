@@ -1,5 +1,6 @@
 import { ISlashCommandOption, SlashCommand } from "../slash-command";
 import { CommandInteraction, GuildMember } from "discord.js";
+import { slashCommandRepository } from "../index";
 
 const {
   joinVoiceChannel,
@@ -20,11 +21,12 @@ export class PlayCommand extends SlashCommand {
       },
     ];
 
-    super("jebnij", "Jebnij muzyczką", options);
+    super("jebnij", "Jebnij muzyczką", options, slashCommandRepository);
   }
 
   async execute(interaction: CommandInteraction): Promise<void> {
     const member = interaction.member as GuildMember;
+    const { value: link } = interaction.options.get("link");
 
     const connection = joinVoiceChannel({
       channelId: member.voice.channel.id,
@@ -33,9 +35,7 @@ export class PlayCommand extends SlashCommand {
     });
 
     const player = createAudioPlayer();
-    const resource = createAudioResource(
-      await ytdl("https://www.youtube.com/watch?v=0FCBQWJEHpw")
-    );
+    const resource = createAudioResource(await ytdl(link));
 
     connection.subscribe(player);
     player.play(resource);

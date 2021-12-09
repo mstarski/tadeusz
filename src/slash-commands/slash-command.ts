@@ -1,4 +1,5 @@
 import { CommandInteraction } from "discord.js";
+import { SlashCommandsRepository } from "./slash-commands.repository";
 
 const { SlashCommandBuilder } = require("@discordjs/builders");
 
@@ -19,7 +20,8 @@ export abstract class SlashCommand {
   protected constructor(
     private readonly name: string,
     private readonly description: string,
-    private readonly options: ISlashCommandOption[]
+    private readonly options: ISlashCommandOption[],
+    private readonly slashCommandsRepository: SlashCommandsRepository
   ) {
     this.commandBody = new SlashCommandBuilder()
       .setName(this.name)
@@ -33,6 +35,8 @@ export abstract class SlashCommand {
           .setRequired(option.required)
       )
     );
+
+    this.slashCommandsRepository.add(this);
   }
 
   public get body() {

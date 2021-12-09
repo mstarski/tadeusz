@@ -1,11 +1,7 @@
 // Require the necessary discord.js classes
 import config from "./utils/config";
-
-// noinspection ES6UnusedImports
-import AppModule from "./app.module";
-
-import { SlashCommandsController } from "./slash-commands/slash-commands.controller";
-import { HelloController } from "./hello/hello.controller";
+import { slashCommandsController } from "./slash-commands";
+import { helloController } from "./hello";
 
 const { Client, Intents } = require("discord.js");
 
@@ -21,13 +17,13 @@ const client = new Client({
 });
 
 // Create controllers
-new HelloController({
+helloController({
   client,
   mode: "once",
   event: "ready",
 });
 
-new SlashCommandsController({
+slashCommandsController({
   client,
   mode: "on",
   event: "interactionCreate",

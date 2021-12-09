@@ -1,17 +1,13 @@
 import { CommandInteraction } from "discord.js";
 import { Controller, IControllerConfig } from "../utils/controller";
 import { SlashCommandsRepository } from "./slash-commands.repository";
-import SlashCommandModule from "./slash-commands.module";
 
 export class SlashCommandsController extends Controller {
-  private readonly slashCommandRepository: SlashCommandsRepository;
-
-  constructor(props: IControllerConfig) {
+  constructor(
+    props: IControllerConfig,
+    private readonly slashCommandRepository: SlashCommandsRepository
+  ) {
     super(props);
-
-    this.slashCommandRepository = SlashCommandModule.get(
-      SlashCommandsRepository
-    );
   }
 
   async execute(interaction: CommandInteraction): Promise<void> {
