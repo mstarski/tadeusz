@@ -2,6 +2,7 @@
 import config from "./utils/config";
 import { slashCommandsController } from "./slash-commands";
 import { helloController } from "./hello";
+import { connectionService } from "./connection";
 
 const { Client, Intents } = require("discord.js");
 
@@ -15,6 +16,8 @@ const client = new Client({
     Intents.FLAGS.GUILD_VOICE_STATES,
   ],
 });
+
+connectionService.setClient(client);
 
 // Create controllers
 helloController({

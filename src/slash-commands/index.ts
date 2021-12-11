@@ -3,11 +3,20 @@ import { SlashCommandsController } from "./slash-commands.controller";
 import { IControllerConfig } from "../utils/controller";
 import { PlayCommand } from "./cmd/play.command";
 import { ControllerFactory } from "../typedefs/common";
+import { connectionService } from "../connection";
+import { musicPlayerService } from "../music";
 
+// Repositories
 export const slashCommandRepository = new SlashCommandsRepository();
 
+// Controllers
 export const slashCommandsController: ControllerFactory<SlashCommandsController> =
   (config: IControllerConfig) =>
-    new SlashCommandsController(config, slashCommandRepository);
+    new SlashCommandsController(
+      config,
+      slashCommandRepository,
+      connectionService
+    );
 
-export const playCommand = new PlayCommand();
+// Commands
+export const playCommand = new PlayCommand(musicPlayerService);

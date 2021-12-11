@@ -1,4 +1,4 @@
-import { MusicPlayerService } from "../music/music.service";
+import { MusicPlayerService } from "../music/music-player.service";
 import { YoutubeService } from "../music/youtube.service";
 import { videoInfo } from "ytdl-core";
 import { Readable } from "stream";

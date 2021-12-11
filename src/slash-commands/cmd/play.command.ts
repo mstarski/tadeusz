@@ -1,47 +1,54 @@
-import { ISlashCommandOption, SlashCommand } from "../slash-command";
-import { CommandInteraction, GuildMember } from "discord.js";
+import { SlashCommand } from "../slash-command";
+import { CommandInteraction } from "discord.js";
 import { slashCommandRepository } from "../index";
-
-const {
-  joinVoiceChannel,
-  createAudioPlayer,
-  createAudioResource,
-  AudioPlayerStatus,
-} = require("@discordjs/voice");
-
-const ytdl = require("ytdl-core-discord");
+import { MusicPlayerService } from "../../music/music-player.service";
+import { YoutubeLink } from "../../music/youtube-link";
+import { bold, underline } from "../../utils/markdown";
 
 export class PlayCommand extends SlashCommand {
-  constructor() {
-    const options: ISlashCommandOption[] = [
-      {
-        name: "link",
-        description: "Link do muzyczki",
-        required: true,
-      },
-    ];
+  private readonly errorMap = {
+    InvalidYoutubeLinkError: "Invalid youtube link.",
+    ConnectionToVoiceChatNotFoundError: "Connection to voice chat not found.",
+  };
 
-    super("jebnij", "Jebnij muzyczką", options, slashCommandRepository);
+  constructor(private readonly musicPlayerService: MusicPlayerService) {
+    super(
+      "jebnij",
+      "Jebnij muzyczką",
+      [
+        {
+          name: "link",
+          description: "Link do muzyczki",
+          required: true,
+        },
+      ],
+
+      slashCommandRepository
+    );
   }
 
   async execute(interaction: CommandInteraction): Promise<void> {
-    const member = interaction.member as GuildMember;
-    const { value: link } = interaction.options.get("link");
+    try {
+      const link = new YoutubeLink(
+        interaction.options.get("link").value as string
+      );
 
-    const connection = joinVoiceChannel({
-      channelId: member.voice.channel.id,
-      guildId: interaction.guild.id,
-      adapterCreator: interaction.guild.voiceAdapterCreator,
-    });
+      const queuedSong = await this.musicPlayerService.play(link);
+      await interaction.reply(
+        `Queued song: ${underline(bold(queuedSong.title))} by ${
+          interaction.user.username
+        }`
+      );
+    } catch (error) {
+      const errorResponse = this.errorMap[error.constructor.name];
 
-    const player = createAudioPlayer();
-    const resource = createAudioResource(await ytdl(link));
+      if (!errorResponse) {
+        console.error(error);
+      }
 
-    connection.subscribe(player);
-    player.play(resource);
-
-    player.on(AudioPlayerStatus.Idle, () => connection.disconnect());
-
-    await interaction.reply("Jebnąłem");
+      await interaction.reply(
+        this.errorMap[error.constructor.name] || "Oops, something went wrong"
+      );
+    }
   }
 }

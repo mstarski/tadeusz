@@ -1,17 +1,14 @@
 import ytdl from "ytdl-core-discord";
 import { videoInfo } from "ytdl-core";
-import { Readable } from "stream";
+import { YoutubeLink } from "./youtube-link";
+import { Song } from "./song";
 
 export class YoutubeService {
-  validateURL(url: string): boolean {
-    return ytdl.validateURL(url);
+  async getInfo(link: YoutubeLink): Promise<videoInfo | null> {
+    return ytdl.getBasicInfo(link.value);
   }
 
-  getInfo(url: string): Promise<videoInfo> {
-    return ytdl.getBasicInfo(url);
-  }
-
-  download(info: videoInfo): Readable {
-    return ytdl.downloadFromInfo(info);
+  async download(song: Song) {
+    return ytdl(song.url);
   }
 }
