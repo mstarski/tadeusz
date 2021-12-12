@@ -11,10 +11,13 @@ import {
 } from "@discordjs/voice";
 import { MessagingService } from "../messaging/messaging.service";
 import { bold, underline } from "../utils/markdown";
+import { NoMusicError } from "../errors/music.errors";
 
 export class MusicPlayerService {
   private readonly queue = [];
   private readonly discordPlayer: AudioPlayer;
+
+  private currentSong: Song;
 
   constructor(
     private readonly youtubeService: YoutubeService,
@@ -28,6 +31,8 @@ export class MusicPlayerService {
      * played.
      */
     this.discordPlayer.on(AudioPlayerStatus.Idle, async () => {
+      this.currentSong = null;
+
       await this.checkQueue();
     });
   }
@@ -42,9 +47,29 @@ export class MusicPlayerService {
     return song;
   }
 
-  async stop() {}
+  async pause() {
+    if (this.currentSong === null) {
+      throw new NoMusicError("No song is currently being played.");
+    }
 
-  async skip() {}
+    return this.discordPlayer.pause();
+  }
+
+  async unpause() {
+    if (this.currentSong === null) {
+      throw new NoMusicError("No song is currently being played.");
+    }
+
+    this.discordPlayer.unpause();
+  }
+
+  async skip() {
+    this.discordPlayer.stop();
+
+    setInterval(() => {
+      console.log(this.discordPlayer.state.status);
+    }, 1000);
+  }
 
   getQueue() {
     return Object.freeze(this.queue);
@@ -70,9 +95,9 @@ export class MusicPlayerService {
       return connection.disconnect();
     }
 
-    const song = this.queue.pop();
+    this.currentSong = this.queue.pop();
     const resource = createAudioResource(
-      await this.youtubeService.download(song)
+      await this.youtubeService.download(this.currentSong)
     );
 
     this.discordPlayer.play(resource);
@@ -83,7 +108,7 @@ export class MusicPlayerService {
      */
     setTimeout(() => {
       void this.messagingService.sendMessage(
-        `Now playing: ${bold(underline(song.title))}`
+        `Now playing: ${bold(underline(this.currentSong.title))}`
       );
     }, 1000);
   }

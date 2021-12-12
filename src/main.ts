@@ -1,6 +1,9 @@
 // Require the necessary discord.js classes
 import config from "./utils/config";
-import { slashCommandsController } from "./slash-commands";
+import {
+  slashCommandRepository,
+  slashCommandsController,
+} from "./slash-commands";
 import { helloController } from "./hello";
 import { connectionService } from "./connection";
 
@@ -18,6 +21,7 @@ const client = new Client({
 });
 
 connectionService.setClient(client);
+void slashCommandRepository.deploy();
 
 // Create controllers
 helloController({

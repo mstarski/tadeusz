@@ -54,7 +54,7 @@ describe("Music player functionalities", () => {
 
     it("should not dequeue current song", async () => {
       await musicPlayer.play(sampleSongLink);
-      await musicPlayer.stop();
+      await musicPlayer.pause();
 
       expect(musicPlayer.getQueue()).toHaveLength(1);
     });

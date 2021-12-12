@@ -1,9 +1,9 @@
-import { SlashCommand } from "../slash-command";
+import { SlashCommand } from "../../slash-command";
 import { CommandInteraction } from "discord.js";
-import { slashCommandRepository } from "../index";
-import { MusicPlayerService } from "../../music/music-player.service";
-import { YoutubeLink } from "../../music/youtube-link";
-import { bold, underline } from "../../utils/markdown";
+import { slashCommandRepository } from "../../index";
+import { MusicPlayerService } from "../../../music/music-player.service";
+import { YoutubeLink } from "../../../music/youtube-link";
+import { bold, underline } from "../../../utils/markdown";
 
 export class PlayCommand extends SlashCommand {
   private readonly errorMap = {
@@ -47,7 +47,7 @@ export class PlayCommand extends SlashCommand {
       }
 
       await interaction.reply(
-        this.errorMap[error.constructor.name] || "Oops, something went wrong"
+        this.errorMap[error.constructor.name] || "Oops, something went wrong..."
       );
     }
   }
