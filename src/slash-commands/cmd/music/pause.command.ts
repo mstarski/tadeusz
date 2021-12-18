@@ -3,24 +3,28 @@ import { slashCommandRepository } from "../../index";
 import { CommandInteraction } from "discord.js";
 import { MusicPlayerService } from "../../../music/music-player.service";
 import { NoMusicError } from "../../../errors/music.errors";
+import { MessagingService } from "../../../messaging/messaging.service";
 
 export class PauseCommand extends SlashCommand {
-  constructor(private readonly musicPlayerService: MusicPlayerService) {
-    super("pauza", "Spauzuj obecny utwór", [], slashCommandRepository);
+  constructor(
+    private readonly musicPlayerService: MusicPlayerService,
+    private readonly messagingService: MessagingService
+  ) {
+    super("pause", "Pause current song", [], slashCommandRepository);
   }
 
   async execute(interaction: CommandInteraction): Promise<void> {
     try {
       await this.musicPlayerService.pause();
-      return interaction.reply(
+      return this.messagingService.sendMessage(
         `Song has been paused by ${interaction.user.username}`
       );
     } catch (error) {
       if (error instanceof NoMusicError) {
-        return interaction.reply(error.message);
+        return this.messagingService.sendMessage(error.message);
       } else {
         console.error(error);
-        return interaction.reply("Ooops, something went wrong...");
+        return this.messagingService.sendDefaultErrorMessage();
       }
     }
   }

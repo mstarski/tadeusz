@@ -7,6 +7,8 @@ import { connectionService } from "../connection";
 import { musicPlayerService } from "../music";
 import { PauseCommand } from "./cmd/music/pause.command";
 import { ResumeCommand } from "./cmd/music/resume.command";
+import { SkipCommand } from "./cmd/music/skip.command";
+import { messagingService } from "../messaging";
 
 // Repositories
 export const slashCommandRepository = new SlashCommandsRepository();
@@ -17,10 +19,24 @@ export const slashCommandsController: ControllerFactory<SlashCommandsController>
     new SlashCommandsController(
       config,
       slashCommandRepository,
-      connectionService
+      connectionService,
+      messagingService
     );
 
 // Commands
-export const playCommand = new PlayCommand(musicPlayerService);
-export const pauseCommand = new PauseCommand(musicPlayerService);
-export const resumeCommand = new ResumeCommand(musicPlayerService);
+export const playCommand = new PlayCommand(
+  musicPlayerService,
+  messagingService
+);
+export const pauseCommand = new PauseCommand(
+  musicPlayerService,
+  messagingService
+);
+export const resumeCommand = new ResumeCommand(
+  musicPlayerService,
+  messagingService
+);
+export const skipCommand = new SkipCommand(
+  musicPlayerService,
+  messagingService
+);

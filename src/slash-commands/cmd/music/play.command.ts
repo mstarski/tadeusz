@@ -4,6 +4,8 @@ import { slashCommandRepository } from "../../index";
 import { MusicPlayerService } from "../../../music/music-player.service";
 import { YoutubeLink } from "../../../music/youtube-link";
 import { bold, underline } from "../../../utils/markdown";
+import { MessagingService } from "../../../messaging/messaging.service";
+import { UNKNOWN_ERROR_CHAT_MESSAGE } from "../../../utils/const";
 
 export class PlayCommand extends SlashCommand {
   private readonly errorMap = {
@@ -11,14 +13,17 @@ export class PlayCommand extends SlashCommand {
     ConnectionToVoiceChatNotFoundError: "Connection to voice chat not found.",
   };
 
-  constructor(private readonly musicPlayerService: MusicPlayerService) {
+  constructor(
+    private readonly musicPlayerService: MusicPlayerService,
+    private readonly messagingService: MessagingService
+  ) {
     super(
-      "jebnij",
-      "Jebnij muzyczką",
+      "play",
+      "Play the song from youtube link",
       [
         {
-          name: "link",
-          description: "Link do muzyczki",
+          name: "url",
+          description: "Song's youtube url.",
           required: true,
         },
       ],
@@ -30,11 +35,11 @@ export class PlayCommand extends SlashCommand {
   async execute(interaction: CommandInteraction): Promise<void> {
     try {
       const link = new YoutubeLink(
-        interaction.options.get("link").value as string
+        interaction.options.get("url").value as string
       );
 
       const queuedSong = await this.musicPlayerService.play(link);
-      await interaction.reply(
+      await this.messagingService.sendMessage(
         `Queued song: ${underline(bold(queuedSong.title))} by ${
           interaction.user.username
         }`
@@ -46,8 +51,8 @@ export class PlayCommand extends SlashCommand {
         console.error(error);
       }
 
-      await interaction.reply(
-        this.errorMap[error.constructor.name] || "Oops, something went wrong..."
+      await this.messagingService.sendMessage(
+        this.errorMap[error.constructor.name] || UNKNOWN_ERROR_CHAT_MESSAGE
       );
     }
   }

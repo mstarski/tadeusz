@@ -17,3 +17,9 @@ export class NoMusicError extends TadeuszError {
     super(message);
   }
 }
+
+export class YoutubeDownloadError extends TadeuszError {
+  constructor(message: string) {
+    super(message);
+  }
+}

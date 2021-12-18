@@ -2,12 +2,14 @@ import { CommandInteraction, GuildMember } from "discord.js";
 import { Controller, IControllerConfig } from "../utils/controller";
 import { SlashCommandsRepository } from "./slash-commands.repository";
 import { ConnectionService } from "../connection/connection.service";
+import { MessagingService } from "../messaging/messaging.service";
 
 export class SlashCommandsController extends Controller {
   constructor(
     props: IControllerConfig,
     private readonly slashCommandRepository: SlashCommandsRepository,
-    private readonly connectionService: ConnectionService
+    private readonly connectionService: ConnectionService,
+    private readonly messagingService: MessagingService
   ) {
     super(props);
   }
@@ -23,10 +25,11 @@ export class SlashCommandsController extends Controller {
     const command = this.slashCommandRepository.findByName(commandName);
 
     if (!command) {
-      await interaction.reply("Not found!");
+      await this.messagingService.sendMessage("Not found!");
     }
 
     await command.execute(interaction);
+    await interaction.reply("Ok");
   }
 
   private setConnectionProps(interaction: CommandInteraction) {

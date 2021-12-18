@@ -11,7 +11,7 @@ import {
 } from "@discordjs/voice";
 import { MessagingService } from "../messaging/messaging.service";
 import { bold, underline } from "../utils/markdown";
-import { NoMusicError } from "../errors/music.errors";
+import { NoMusicError, YoutubeDownloadError } from "../errors/music.errors";
 
 export class MusicPlayerService {
   private readonly queue = [];
@@ -64,11 +64,12 @@ export class MusicPlayerService {
   }
 
   async skip() {
-    this.discordPlayer.stop();
+    if (this.currentSong === null) {
+      throw new NoMusicError("No song is currently being played.");
+    }
 
-    setInterval(() => {
-      console.log(this.discordPlayer.state.status);
-    }, 1000);
+    this.discordPlayer.pause();
+    await this.checkQueue();
   }
 
   getQueue() {
@@ -95,22 +96,31 @@ export class MusicPlayerService {
       return connection.disconnect();
     }
 
-    this.currentSong = this.queue.pop();
-    const resource = createAudioResource(
-      await this.youtubeService.download(this.currentSong)
-    );
+    try {
+      this.currentSong = this.queue.pop();
 
-    this.discordPlayer.play(resource);
-
-    /**
-     * Slightly throttle sending a message to prevent showing first 'Playing" before 'Queued' when
-     * there are no songs in the queue.
-     */
-    setTimeout(() => {
-      void this.messagingService.sendMessage(
-        `Now playing: ${bold(underline(this.currentSong.title))}`
+      const resource = createAudioResource(
+        await this.youtubeService.download(this.currentSong)
       );
-    }, 1000);
+
+      this.discordPlayer.play(resource);
+
+      /**
+       * Slightly throttle sending a message to prevent showing first 'Playing" before 'Queued' when
+       * there are no songs in the queue.
+       */
+      setTimeout(() => {
+        void this.messagingService.sendMessage(
+          `Now playing: ${bold(underline(this.currentSong.title))}`
+        );
+      }, 1000);
+    } catch (error) {
+      if (error instanceof YoutubeDownloadError) {
+        await this.messagingService.sendMessage(error.message);
+      } else {
+        await this.messagingService.sendDefaultErrorMessage();
+      }
+    }
   }
 
   private ensureVoiceChatConnection() {
