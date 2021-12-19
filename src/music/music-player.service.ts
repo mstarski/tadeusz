@@ -14,7 +14,7 @@ import { bold, underline } from "../utils/markdown";
 import { NoMusicError, YoutubeDownloadError } from "../errors/music.errors";
 
 export class MusicPlayerService {
-  private readonly queue = [];
+  private readonly queue: Song[] = [];
   private readonly discordPlayer: AudioPlayer;
 
   private currentSong: Song;
@@ -64,16 +64,20 @@ export class MusicPlayerService {
   }
 
   async skip() {
-    if (this.currentSong === null) {
+    if (
+      this.discordPlayer.state.status !== AudioPlayerStatus.Playing ||
+      this.currentSong === null
+    ) {
       throw new NoMusicError("No song is currently being played.");
     }
 
     this.discordPlayer.pause();
     await this.checkQueue();
+    this.discordPlayer.unpause();
   }
 
   getQueue() {
-    return Object.freeze(this.queue);
+    return Object.freeze([...this.queue]);
   }
 
   private async enqueueSong(song: Song) {
@@ -98,11 +102,9 @@ export class MusicPlayerService {
 
     try {
       this.currentSong = this.queue.pop();
+      const audioFile = await this.youtubeService.download(this.currentSong);
 
-      const resource = createAudioResource(
-        await this.youtubeService.download(this.currentSong)
-      );
-
+      const resource = createAudioResource(audioFile);
       this.discordPlayer.play(resource);
 
       /**

@@ -10,7 +10,7 @@ export class ResumeCommand extends SlashCommand {
     private readonly musicPlayerService: MusicPlayerService,
     private readonly messagingService: MessagingService
   ) {
-    super("wznów", "Wznów spauzowany utwór", [], slashCommandRepository);
+    super("resume", "Resume paused song.", [], slashCommandRepository);
   }
 
   async execute(interaction: CommandInteraction): Promise<void> {

@@ -9,6 +9,7 @@ import { PauseCommand } from "./cmd/music/pause.command";
 import { ResumeCommand } from "./cmd/music/resume.command";
 import { SkipCommand } from "./cmd/music/skip.command";
 import { messagingService } from "../messaging";
+import { GetMusicQueueCommand } from "./cmd/music/get-music-queue.command";
 
 // Repositories
 export const slashCommandRepository = new SlashCommandsRepository();
@@ -37,6 +38,10 @@ export const resumeCommand = new ResumeCommand(
   messagingService
 );
 export const skipCommand = new SkipCommand(
+  musicPlayerService,
+  messagingService
+);
+export const musicQueueCommand = new GetMusicQueueCommand(
   musicPlayerService,
   messagingService
 );
