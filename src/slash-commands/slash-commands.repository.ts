@@ -1,5 +1,9 @@
 import { SlashCommand } from "./slash-command";
 import { IsClass } from "../typedefs/common";
+import config from "../utils/config";
+import { Routes } from "discord-api-types/v9";
+
+const { REST } = require("@discordjs/rest");
 
 export class SlashCommandsRepository {
   private readonly commands = new Map();
@@ -26,5 +30,25 @@ export class SlashCommandsRepository {
 
   public remove(token: IsClass<SlashCommand>): boolean {
     return this.commands.delete(token);
+  }
+
+  /**
+   * Deploys command to discord
+   */
+  public async deploy() {
+    const rest = new REST({ version: "9" }).setToken(config.DISCORD_BOT_TOKEN);
+
+    return rest
+      .put(
+        Routes.applicationGuildCommands(
+          config.DISCORD_CLIENT_ID,
+          config.DISCORD_GUILD_ID
+        ),
+        {
+          body: this.getRawCommands(),
+        }
+      )
+      .then(() => console.log("Successfully registered application commands."))
+      .catch(console.error);
   }
 }

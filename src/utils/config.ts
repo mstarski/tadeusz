@@ -1,6 +1,6 @@
 import { Expose, plainToClass } from "class-transformer";
 import { validateSync } from "class-validator";
-import { ConfigCreationError } from "../errors/config.error";
+import { ConfigCreationError } from "../errors/config.errors";
 
 require("dotenv").config();
 
@@ -33,6 +33,7 @@ class Config {
     const validation = validateSync(instance);
 
     if (validation.length) {
+      // noinspection JSUnusedAssignment
       const errorMessage = validation.reduce(
         (msg, err) => (msg += Object.values(err.constraints).join("\n") + "\n"),
         ""

@@ -1,11 +1,16 @@
-import { CommandInteraction } from "discord.js";
+import { CommandInteraction, GuildMember } from "discord.js";
 import { Controller, IControllerConfig } from "../utils/controller";
 import { SlashCommandsRepository } from "./slash-commands.repository";
+import { ConnectionService } from "../connection/connection.service";
+import { MessageAPI } from "../typedefs/discord";
+import { random as randomEmoji } from "node-emoji";
 
 export class SlashCommandsController extends Controller {
   constructor(
     props: IControllerConfig,
-    private readonly slashCommandRepository: SlashCommandsRepository
+    private readonly slashCommandRepository: SlashCommandsRepository,
+    private readonly connectionService: ConnectionService,
+    private readonly messagingService: MessageAPI
   ) {
     super(props);
   }
@@ -15,14 +20,26 @@ export class SlashCommandsController extends Controller {
       return;
     }
 
-    const { commandName } = interaction;
+    this.setConnectionProps(interaction);
 
+    const { commandName } = interaction;
     const command = this.slashCommandRepository.findByName(commandName);
 
     if (!command) {
-      await interaction.reply("Not found!");
+      await this.messagingService.sendMessage("Not found!");
     }
 
+    const { emoji } = randomEmoji();
+
     await command.execute(interaction);
+    await interaction.reply(emoji);
+  }
+
+  private setConnectionProps(interaction: CommandInteraction) {
+    this.connectionService.guildId = interaction.guild.id;
+    this.connectionService.channelId = interaction.channel.id;
+    this.connectionService.voiceAdapterCreator =
+      interaction.guild.voiceAdapterCreator;
+    this.connectionService.currentUser = interaction.member as GuildMember;
   }
 }
