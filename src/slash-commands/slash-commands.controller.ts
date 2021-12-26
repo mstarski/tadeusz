@@ -3,6 +3,7 @@ import { Controller, IControllerConfig } from "../utils/controller";
 import { SlashCommandsRepository } from "./slash-commands.repository";
 import { ConnectionService } from "../connection/connection.service";
 import { MessageAPI } from "../typedefs/discord";
+import { random as randomEmoji } from "node-emoji";
 
 export class SlashCommandsController extends Controller {
   constructor(
@@ -28,8 +29,10 @@ export class SlashCommandsController extends Controller {
       await this.messagingService.sendMessage("Not found!");
     }
 
+    const { emoji } = randomEmoji();
+
     await command.execute(interaction);
-    await interaction.reply("Ok");
+    await interaction.reply(emoji);
   }
 
   private setConnectionProps(interaction: CommandInteraction) {
