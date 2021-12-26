@@ -1,18 +1,25 @@
-import { MoreVideoDetails } from "ytdl-core";
 import { PrivateYoutubeVideoError } from "../errors/music.errors";
+import { MoreVideoDetails } from "ytdl-core";
+import { YoutubeLink } from "./youtube-link";
 
 export class Song {
-  public readonly title: string;
-  public readonly id: string;
-  public readonly url: string;
-
-  constructor(details: MoreVideoDetails) {
-    if (details.isPrivate) {
+  constructor(
+    public readonly title: string,
+    public readonly id: string,
+    public readonly url: YoutubeLink,
+    public readonly isPrivate: boolean
+  ) {
+    if (this.isPrivate) {
       throw new PrivateYoutubeVideoError("Can't use a private youtube video.");
     }
+  }
 
-    this.title = details.title;
-    this.id = details.videoId;
-    this.url = details.video_url;
+  static fromVideoDetails(details: MoreVideoDetails) {
+    return new Song(
+      details.title,
+      details.videoId,
+      new YoutubeLink(details.video_url),
+      details.isPrivate
+    );
   }
 }

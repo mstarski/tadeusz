@@ -5,32 +5,30 @@ import { Song } from "./song";
 import {
   AudioPlayer,
   AudioPlayerStatus,
-  createAudioPlayer,
   createAudioResource,
   VoiceConnectionStatus,
 } from "@discordjs/voice";
-import { MessagingService } from "../messaging/messaging.service";
 import { bold, underline } from "../utils/markdown";
 import { NoMusicError, YoutubeDownloadError } from "../errors/music.errors";
+import { AudioAPI } from "../typedefs/music";
+import { MessageAPI } from "../typedefs/discord";
 
 export class MusicPlayerService {
   private readonly queue: Song[] = [];
-  private readonly discordPlayer: AudioPlayer;
 
   private currentSong: Song;
 
   constructor(
     private readonly youtubeService: YoutubeService,
     private readonly connectionService: ConnectionService,
-    private readonly messagingService: MessagingService
+    private readonly messagingService: MessageAPI,
+    private readonly audioPlayer: AudioAPI
   ) {
-    this.discordPlayer = createAudioPlayer();
-
     /**
      * Idle state event callback only starts after something was already
      * played.
      */
-    this.discordPlayer.on(AudioPlayerStatus.Idle, async () => {
+    this.audioPlayer.on(AudioPlayerStatus.Idle, async () => {
       this.currentSong = null;
 
       await this.checkQueue();
@@ -39,7 +37,7 @@ export class MusicPlayerService {
 
   async play(link: YoutubeLink): Promise<Song> {
     const { videoDetails: details } = await this.youtubeService.getInfo(link);
-    const song = new Song(details);
+    const song = Song.fromVideoDetails(details);
 
     this.ensureVoiceChatConnection();
 
@@ -48,32 +46,32 @@ export class MusicPlayerService {
   }
 
   async pause() {
-    if (this.currentSong === null) {
+    if (!this.currentSong) {
       throw new NoMusicError("No song is currently being played.");
     }
 
-    return this.discordPlayer.pause();
+    return this.audioPlayer.pause();
   }
 
   async unpause() {
-    if (this.currentSong === null) {
+    if (!this.currentSong) {
       throw new NoMusicError("No song is currently being played.");
     }
 
-    this.discordPlayer.unpause();
+    this.audioPlayer.unpause();
   }
 
   async skip() {
     if (
-      this.discordPlayer.state.status !== AudioPlayerStatus.Playing ||
-      this.currentSong === null
+      this.audioPlayer.state.status !== AudioPlayerStatus.Playing ||
+      !this.currentSong
     ) {
       throw new NoMusicError("No song is currently being played.");
     }
 
-    this.discordPlayer.pause();
+    await this.pause();
     await this.checkQueue();
-    this.discordPlayer.unpause();
+    await this.unpause();
   }
 
   getQueue() {
@@ -83,7 +81,7 @@ export class MusicPlayerService {
   private async enqueueSong(song: Song) {
     this.queue.unshift(song);
 
-    if (this.discordPlayer.state.status === AudioPlayerStatus.Idle) {
+    if (this.audioPlayer.state.status === AudioPlayerStatus.Idle) {
       await this.checkQueue();
     }
   }
@@ -105,7 +103,7 @@ export class MusicPlayerService {
       const audioFile = await this.youtubeService.download(this.currentSong);
 
       const resource = createAudioResource(audioFile);
-      this.discordPlayer.play(resource);
+      this.audioPlayer.play(resource);
 
       /**
        * Slightly throttle sending a message to prevent showing first 'Playing" before 'Queued' when
@@ -130,7 +128,7 @@ export class MusicPlayerService {
 
     if (!connection) {
       const connection = this.createConnection();
-      connection.subscribe(this.discordPlayer);
+      connection.subscribe(this.audioPlayer as AudioPlayer);
     }
   }
 

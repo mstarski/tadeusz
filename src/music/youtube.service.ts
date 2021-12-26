@@ -11,7 +11,7 @@ export class YoutubeService {
 
   async download(song: Song) {
     try {
-      return ytdl(song.url);
+      return ytdl(song.url.value);
     } catch {
       throw new YoutubeDownloadError(
         `Couldn't download this song: ${song.title}`

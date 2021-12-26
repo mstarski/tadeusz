@@ -15,31 +15,27 @@ export class ConnectionService {
    * Discord client
    * @private
    */
-  private client: Client;
+  client: Client;
 
   /**
    * User that invokes the current interaction
    * @private
    */
-  private currentUser: GuildMember;
+  currentUser: GuildMember;
 
   /**
    * Id of a channel where user that executes command sits in
    * @private
    */
-  private channelId: string;
+  channelId: string;
 
   /**
    * Id of a guild where the bot is being used in
    * @private
    */
-  private guildId: string;
+  guildId: string;
 
-  /**
-   * Guild's voice adapter creator (used when establishing connection)
-   * @private
-   */
-  private voiceAdapterCreator: InternalDiscordGatewayAdapterCreator;
+  voiceAdapterCreator: InternalDiscordGatewayAdapterCreator;
 
   createVoiceChatConnection(): VoiceConnection {
     if (!this.isUserOnVoiceChat()) {
@@ -57,42 +53,12 @@ export class ConnectionService {
     return getVoiceConnection(this.guildId);
   }
 
-  disconnectFromVoiceChat() {
+  disconnectFromVoiceChat(): boolean {
     const connection = this.getVoiceChatConnection();
-    connection.disconnect();
+    return connection.disconnect();
   }
 
   isUserOnVoiceChat(): boolean {
     return !!this.currentUser.voice.channel;
-  }
-
-  setClient(client: Client) {
-    this.client = client;
-  }
-
-  getClient() {
-    return this.client;
-  }
-
-  setChannelId(id: string) {
-    this.channelId = id;
-  }
-
-  getChannelId() {
-    return this.channelId;
-  }
-
-  setGuildId(id: string) {
-    this.guildId = id;
-  }
-
-  setVoiceAdapterCreator(
-    voiceAdapterCreator: InternalDiscordGatewayAdapterCreator
-  ) {
-    this.voiceAdapterCreator = voiceAdapterCreator;
-  }
-
-  setCurrentUser(user: GuildMember) {
-    this.currentUser = user;
   }
 }

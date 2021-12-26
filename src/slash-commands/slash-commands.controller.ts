@@ -2,14 +2,14 @@ import { CommandInteraction, GuildMember } from "discord.js";
 import { Controller, IControllerConfig } from "../utils/controller";
 import { SlashCommandsRepository } from "./slash-commands.repository";
 import { ConnectionService } from "../connection/connection.service";
-import { MessagingService } from "../messaging/messaging.service";
+import { MessageAPI } from "../typedefs/discord";
 
 export class SlashCommandsController extends Controller {
   constructor(
     props: IControllerConfig,
     private readonly slashCommandRepository: SlashCommandsRepository,
     private readonly connectionService: ConnectionService,
-    private readonly messagingService: MessagingService
+    private readonly messagingService: MessageAPI
   ) {
     super(props);
   }
@@ -33,11 +33,10 @@ export class SlashCommandsController extends Controller {
   }
 
   private setConnectionProps(interaction: CommandInteraction) {
-    this.connectionService.setGuildId(interaction.guild.id);
-    this.connectionService.setChannelId(interaction.channel.id);
-    this.connectionService.setVoiceAdapterCreator(
-      interaction.guild.voiceAdapterCreator
-    );
-    this.connectionService.setCurrentUser(interaction.member as GuildMember);
+    this.connectionService.guildId = interaction.guild.id;
+    this.connectionService.channelId = interaction.channel.id;
+    this.connectionService.voiceAdapterCreator =
+      interaction.guild.voiceAdapterCreator;
+    this.connectionService.currentUser = interaction.member as GuildMember;
   }
 }

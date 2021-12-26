@@ -20,7 +20,7 @@ const client = new Client({
   ],
 });
 
-connectionService.setClient(client);
+connectionService.client = client;
 void slashCommandRepository.deploy();
 
 // Create controllers

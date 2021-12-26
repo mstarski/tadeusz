@@ -3,7 +3,7 @@ import { TextChannel } from "discord.js";
 import { UNKNOWN_ERROR_CHAT_MESSAGE } from "../utils/const";
 
 export class MessagingService {
-  constructor(private connectionService: ConnectionService) {}
+  constructor(private readonly connectionService: ConnectionService) {}
 
   async sendMessage(content: string) {
     const channel = this.getChannelInstance();
@@ -16,8 +16,8 @@ export class MessagingService {
   }
 
   private getChannelInstance(): TextChannel {
-    const client = this.connectionService.getClient();
-    const channelId = this.connectionService.getChannelId();
+    const client = this.connectionService.client;
+    const channelId = this.connectionService.channelId;
     return client.channels.cache.get(channelId) as TextChannel;
   }
 }

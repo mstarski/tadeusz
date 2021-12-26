@@ -2,12 +2,12 @@ import { SlashCommand } from "../../slash-command";
 import { CommandInteraction } from "discord.js";
 import { slashCommandRepository } from "../../index";
 import { MusicPlayerService } from "../../../music/music-player.service";
-import { MessagingService } from "../../../messaging/messaging.service";
+import { MessageAPI } from "../../../typedefs/discord";
 
 export class GetMusicQueueCommand extends SlashCommand {
   constructor(
     private readonly musicPlayerService: MusicPlayerService,
-    private readonly messagingService: MessagingService
+    private readonly messagingService: MessageAPI
   ) {
     super("music-queue", "Show queued songs.", [], slashCommandRepository);
   }
