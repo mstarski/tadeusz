@@ -1,11 +1,14 @@
 {
   "name": "tadeusz",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/main.js",
   "license": "MIT",
   "scripts": {
     "build": "tsc --project tsconfig.json",
-    "start": "tsc-watch --project tsconfig.json --onSuccess 'node dist/main.js'",
+    "build:image": "docker build -t tadeusz .",
+    "start": "node dist/main.js",
+    "start:dev": "tsc-watch --project tsconfig.json --onSuccess 'node dist/main.js'",
+    "start:container": "docker container run --env-file=.env tadeusz main.js",
     "test": "jest",
     "test:watch": "jest --watch"
   },
