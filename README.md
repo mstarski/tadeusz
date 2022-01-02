@@ -1,5 +1,7 @@
 # Tadeusz - a discord bot
 
+[![deploy](https://github.com/mstarski/tadeusz/actions/workflows/deploy.yml/badge.svg?branch=master)](https://github.com/mstarski/tadeusz/actions/workflows/deploy.yml)
+
 ## Deployment
 To start tadeusz on remote server you have to:
 
