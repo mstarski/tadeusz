@@ -8,6 +8,8 @@ export class HelloController extends Controller {
 
   // When the client is ready, run this code (only once)
   execute(interaction: Interaction): void {
-    console.log(`Tadeusz is ready as ${this.client.user.tag}.`);
+    console.log(
+      `Tadeusz [DEPLOY TEST123] is ready as ${this.client.user.tag}.`
+    );
   }
 }
