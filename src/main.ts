@@ -6,6 +6,7 @@ import {
 } from "./slash-commands";
 import { helloController } from "./hello";
 import { connectionService } from "./connection";
+import { appExit } from "./utils/exit";
 
 const { Client, Intents } = require("discord.js");
 
@@ -38,3 +39,7 @@ slashCommandsController({
 
 // Login to Discord with your client's token
 void client.login(config.DISCORD_BOT_TOKEN);
+
+// Exit on error to enable a potential reboot
+process.on("uncaughtException", appExit);
+process.on("unhandledRejection", appExit);
