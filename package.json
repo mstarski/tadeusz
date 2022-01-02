@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc --project tsconfig.json",
     "build:image": "docker build -t tadeusz .",
-    "start": "node dist/main.js",
+    "start": "yarn build && node dist/main.js",
     "start:dev": "tsc-watch --project tsconfig.json --onSuccess 'node dist/main.js'",
     "start:container": "docker container run --env-file=.env tadeusz main.js",
     "test": "jest",
