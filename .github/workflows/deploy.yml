@@ -28,7 +28,7 @@ jobs:
         username: ${{ secrets.VPS_USERNAME }}
         password: ${{ secrets.VPS_PASSWORD }}
         port: ${{ secrets.VPS_PORT }}
-        source: "docker-compose.yml"
+        source: "docker-compose.yml,scripts/remote-start.sh"
         target: "/home/michals/tadeusz"
         
     - name: Configure AWS credentials
@@ -58,4 +58,4 @@ jobs:
         username: ${{ secrets.VPS_USERNAME }}
         password: ${{ secrets.VPS_PASSWORD }}
         port: ${{ secrets.VPS_PORT }}
-        script: (cd /home/michals/tadeusz; docker-compose down; docker-compose up -d --build)
+        script: (cd /home/michals/tadeusz; ./remote-start.sh)
