@@ -58,4 +58,4 @@ jobs:
         username: ${{ secrets.VPS_USERNAME }}
         password: ${{ secrets.VPS_PASSWORD }}
         port: ${{ secrets.VPS_PORT }}
-        script: (cd /home/michals/tadeusz; ./remote-start.sh)
+        script: (cd /home/michals/tadeusz; ./scripts/remote-start.sh)
