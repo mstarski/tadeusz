@@ -14,12 +14,12 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build:
-    name: scp-files
+    name: deploy
     runs-on: ubuntu-latest
     
     steps:
     - name: Check out code
-    - uses: actions/checkout@master
+      uses: actions/checkout@master
     
     - name: Copy docker-compose.yml via scp
       uses: appleboy/scp-action@master
