@@ -4,12 +4,15 @@ import { IControllerConfig } from "../utils/controller";
 import { PlayCommand } from "./cmd/music/play.command";
 import { ControllerFactory } from "../typedefs/common";
 import { connectionService } from "../connection";
-import { musicPlayerService } from "../music";
+import { audioPlayerService, musicPlayerService } from "../music";
 import { PauseCommand } from "./cmd/music/pause.command";
 import { ResumeCommand } from "./cmd/music/resume.command";
 import { SkipCommand } from "./cmd/music/skip.command";
 import { messagingService } from "../messaging";
 import { GetMusicQueueCommand } from "./cmd/music/get-music-queue.command";
+import { JoinVoiceCommand } from "./cmd/music/join-voice.command";
+import { createAudioPlayer } from "@discordjs/voice";
+import { AudioAPI } from "../typedefs/music";
 
 // Repositories
 export const slashCommandRepository = new SlashCommandsRepository();
@@ -44,4 +47,8 @@ export const skipCommand = new SkipCommand(
 export const musicQueueCommand = new GetMusicQueueCommand(
   musicPlayerService,
   messagingService
+);
+export const joinVoiceCommand = new JoinVoiceCommand(
+  audioPlayerService,
+  musicPlayerService
 );

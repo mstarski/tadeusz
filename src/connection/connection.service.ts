@@ -55,7 +55,7 @@ export class ConnectionService {
 
   disconnectFromVoiceChat(): boolean {
     const connection = this.getVoiceChatConnection();
-    return connection.disconnect();
+    return connection?.disconnect();
   }
 
   isUserOnVoiceChat(): boolean {
