@@ -13,19 +13,17 @@ export class GetMusicQueueCommand extends SlashCommand {
   }
 
   async execute(interaction: CommandInteraction): Promise<void> {
-    const queue = this.musicPlayerService.getQueue();
+    const queue = await this.musicPlayerService.getQueue();
 
     if (queue.length === 0) {
       return this.messagingService.sendMessage("Queue is empty.");
     }
 
     // noinspection JSUnusedAssignment
-    const queueView = this.musicPlayerService
-      .getQueue()
-      .reduce(
-        (result, song, idx) => (result += `${idx + 1}. ${song.title}\n`),
-        ""
-      );
+    const queueView = queue.reduce(
+      (result, song, idx) => (result += `${idx + 1}. ${song.title}\n`),
+      ""
+    );
 
     return this.messagingService.sendMessage(queueView);
   }

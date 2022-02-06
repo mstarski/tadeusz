@@ -12,22 +12,23 @@ import { bold, underline } from "../utils/markdown";
 import { NoMusicError, YoutubeDownloadError } from "../errors/music.errors";
 import { AudioAPI } from "../typedefs/music";
 import { MessageAPI } from "../typedefs/discord";
+import { MusicQueueService } from "./music-queue.service";
 
 export class MusicPlayerService {
-  private readonly queue: Song[] = [];
-
   private currentSong: Song;
 
   constructor(
     private readonly youtubeService: YoutubeService,
     private readonly connectionService: ConnectionService,
     private readonly messagingService: MessageAPI,
-    private readonly audioPlayer: AudioAPI
+    private readonly audioPlayer: AudioAPI,
+    private readonly musicQueueService: MusicQueueService
   ) {
     /**
      * Idle state event callback only starts after something was already
      * played.
      */
+
     this.audioPlayer.on(AudioPlayerStatus.Idle, async () => {
       this.currentSong = null;
 
@@ -74,12 +75,12 @@ export class MusicPlayerService {
     await this.unpause();
   }
 
-  getQueue() {
-    return Object.freeze([...this.queue]);
+  async getQueue() {
+    return await this.musicQueueService.getQueue();
   }
 
   private async enqueueSong(song: Song) {
-    this.queue.unshift(song);
+    await this.musicQueueService.enqueue(song);
 
     if (this.audioPlayer.state.status === AudioPlayerStatus.Idle) {
       await this.checkQueue();
@@ -93,13 +94,14 @@ export class MusicPlayerService {
    */
   private async checkQueue() {
     const connection = this.connectionService.getVoiceChatConnection();
+    const queueLength = await this.musicQueueService.getQueueLength();
 
-    if (this.queue.length === 0) {
+    if (queueLength === 0) {
       return connection.disconnect();
     }
 
     try {
-      this.currentSong = this.queue.pop();
+      this.currentSong = await this.musicQueueService.dequeue();
       const audioFile = await this.youtubeService.download(this.currentSong);
 
       const resource = createAudioResource(audioFile);
@@ -118,6 +120,8 @@ export class MusicPlayerService {
       if (error instanceof YoutubeDownloadError) {
         await this.messagingService.sendMessage(error.message);
       } else {
+        console.log(error);
+
         await this.messagingService.sendDefaultErrorMessage();
       }
     }
