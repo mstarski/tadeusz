@@ -3,12 +3,12 @@ import { MusicPlayerService } from "../../../music/music-player.service";
 import { slashCommandRepository } from "../../index";
 import { CommandInteraction } from "discord.js";
 import { NoMusicError } from "../../../errors/music.errors";
-import { MessageAPI } from "../../../typedefs/discord";
+import { IMessagingService } from "../../../typedefs/discord";
 
 export class SkipCommand extends SlashCommand {
   constructor(
     private readonly musicPlayerService: MusicPlayerService,
-    private readonly messagingService: MessageAPI
+    private readonly messagingService: IMessagingService
   ) {
     super("skip", "Skip current song", [], slashCommandRepository);
   }

@@ -1,12 +1,9 @@
 import { Song } from "./song";
 import { songFactory } from "./song.factory";
 import { SongEntity } from "./song.entity";
+import { IMusicQueueService } from "../typedefs/music";
 
-export class MusicQueueService {
-  constructor() {
-    void this.establishDBConnection();
-  }
-
+export class MusicQueueService implements IMusicQueueService {
   async getQueue(): Promise<Song[]> {
     const songs = await SongEntity.find();
     return songs.map(songFactory.fromSchema);
@@ -26,6 +23,4 @@ export class MusicQueueService {
     const songEntity = songFactory.fromModel(song);
     await songEntity.save();
   }
-
-  private async establishDBConnection(): Promise<void> {}
 }

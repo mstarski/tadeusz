@@ -1,12 +1,20 @@
 import { MusicPlayerService } from "../music/music-player.service";
 import {
-  MockAudioPlayer,
+  MockAudioPlayerService,
   MockConnectionService,
   MockMessagingService,
+  MockMusicQueueService,
   MockYoutubeService,
 } from "./mocks";
 import { Song } from "../music/song";
 import { YoutubeLink } from "../music/youtube-link";
+import {
+  IAudioPlayerService,
+  IMusicQueueService,
+  IYoutubeService,
+} from "../typedefs/music";
+import { IConnectionService } from "../typedefs/connection";
+import { IMessagingService } from "../typedefs/discord";
 import { NoMusicError } from "../errors/music.errors";
 
 describe("Music player functionalities", () => {
@@ -14,6 +22,12 @@ describe("Music player functionalities", () => {
   let sampleLink: YoutubeLink;
   let sampleLink2: YoutubeLink;
   let sampleSong: Song;
+
+  let ytService: IYoutubeService;
+  let connectionService: IConnectionService;
+  let messagingService: IMessagingService;
+  let audioPlayerService: IAudioPlayerService;
+  let musicQueueService: IMusicQueueService;
 
   beforeEach(() => {
     sampleLink = new YoutubeLink("https://www.youtube.com/watch?v=R6jvSdomL_A");
@@ -23,11 +37,18 @@ describe("Music player functionalities", () => {
 
     sampleSong = new Song("A test song", "123", sampleLink, false);
 
+    ytService = new MockYoutubeService();
+    connectionService = new MockConnectionService();
+    messagingService = new MockMessagingService();
+    audioPlayerService = new MockAudioPlayerService();
+    musicQueueService = new MockMusicQueueService();
+
     musicPlayer = new MusicPlayerService(
-      new MockYoutubeService(),
-      new MockConnectionService(),
-      new MockMessagingService(),
-      new MockAudioPlayer()
+      ytService,
+      connectionService,
+      messagingService,
+      audioPlayerService,
+      musicQueueService
     );
   });
 
@@ -37,24 +58,35 @@ describe("Music player functionalities", () => {
 
   describe("Playing music", () => {
     it("Should ensure that the connection is on", async () => {
-      const ensureSpy = jest.spyOn<any, any>(
-        musicPlayer,
+      const ensureSpy = jest.spyOn(
+        audioPlayerService,
         "ensureVoiceChatConnection"
       );
 
       await musicPlayer.play(sampleLink);
 
       expect(ensureSpy).toHaveBeenCalledTimes(1);
+
+      expect(true);
     });
   });
 
   describe("Music queue", () => {
+    it("Should automatically play the first song after it has been put to the queue", async () => {
+      const enqueueSpy = jest.spyOn(musicQueueService, "enqueue");
+
+      await musicPlayer.play(sampleLink);
+
+      expect(enqueueSpy).toHaveBeenCalledTimes(1);
+      expect(await musicPlayer.getQueue()).toHaveLength(0);
+    });
+
     it("Should put a song onto queue when executing play", async () => {
       await musicPlayer.play(sampleLink);
       await musicPlayer.play(sampleLink2);
       await musicPlayer.play(sampleLink);
 
-      expect(musicPlayer.getQueue()).toHaveLength(2);
+      expect(await musicPlayer.getQueue()).toHaveLength(2);
     });
 
     it("Should not change state when pausing", async () => {
@@ -62,7 +94,7 @@ describe("Music player functionalities", () => {
       await musicPlayer.play(sampleLink2);
       await musicPlayer.pause();
 
-      expect(musicPlayer.getQueue()).toHaveLength(1);
+      expect(await musicPlayer.getQueue()).toHaveLength(1);
     });
 
     it("Should not change state when unpausing", async () => {
@@ -71,7 +103,7 @@ describe("Music player functionalities", () => {
       await musicPlayer.pause();
       await musicPlayer.unpause();
 
-      expect(musicPlayer.getQueue()).toHaveLength(1);
+      expect(await musicPlayer.getQueue()).toHaveLength(1);
     });
 
     it("Should dequeue a song when skipping", async () => {
@@ -79,7 +111,7 @@ describe("Music player functionalities", () => {
       await musicPlayer.play(sampleLink2);
       await musicPlayer.skip();
 
-      expect(musicPlayer.getQueue()).toHaveLength(0);
+      expect(await musicPlayer.getQueue()).toHaveLength(0);
     });
   });
 
@@ -93,7 +125,7 @@ describe("Music player functionalities", () => {
 
   describe("Skipping music", () => {
     it("should pause current song", async () => {
-      jest.spyOn(musicPlayer, "pause");
+      const pauseSpy = jest.spyOn(musicPlayer, "pause");
 
       await musicPlayer.play(sampleLink);
       await musicPlayer.play(sampleLink2);
@@ -101,7 +133,7 @@ describe("Music player functionalities", () => {
 
       await musicPlayer.skip();
 
-      expect(musicPlayer.pause).toHaveBeenCalledTimes(1);
+      expect(pauseSpy).toHaveBeenCalledTimes(1);
     });
 
     it("should dequeue current song", async () => {
@@ -111,8 +143,10 @@ describe("Music player functionalities", () => {
 
       await musicPlayer.skip();
 
-      expect(musicPlayer.getQueue()).toHaveLength(1);
-      expect(musicPlayer.getQueue()[0].url.value).toBe(sampleLink2.value);
+      expect(await musicPlayer.getQueue()).toHaveLength(1);
+      expect((await musicPlayer.getQueue())[0].url.value).toBe(
+        sampleLink2.value
+      );
     });
   });
 });

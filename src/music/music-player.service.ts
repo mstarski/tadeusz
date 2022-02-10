@@ -1,23 +1,26 @@
-import { YoutubeService } from "./youtube.service";
-import { ConnectionService } from "../connection/connection.service";
 import { YoutubeLink } from "./youtube-link";
 import { Song } from "./song";
 import { AudioPlayerStatus, createAudioResource } from "@discordjs/voice";
 import { bold, underline } from "../utils/markdown";
 import { NoMusicError, YoutubeDownloadError } from "../errors/music.errors";
-import { MessageAPI } from "../typedefs/discord";
-import { MusicQueueService } from "./music-queue.service";
-import { AudioPlayerService } from "./audio-player.service";
+import { IMessagingService } from "../typedefs/discord";
+import {
+  IAudioPlayerService,
+  IMusicPlayerService,
+  IMusicQueueService,
+  IYoutubeService,
+} from "../typedefs/music";
+import { IConnectionService } from "../typedefs/connection";
 
-export class MusicPlayerService {
+export class MusicPlayerService implements IMusicPlayerService {
   private currentSong: Song;
 
   constructor(
-    private readonly youtubeService: YoutubeService,
-    private readonly connectionService: ConnectionService,
-    private readonly messagingService: MessageAPI,
-    private readonly audioPlayerService: AudioPlayerService,
-    private readonly musicQueueService: MusicQueueService
+    private readonly youtubeService: IYoutubeService,
+    private readonly connectionService: IConnectionService,
+    private readonly messagingService: IMessagingService,
+    private readonly audioPlayerService: IAudioPlayerService,
+    private readonly musicQueueService: IMusicQueueService
   ) {
     /**
      * Idle state event callback only starts after something was already
@@ -74,13 +77,6 @@ export class MusicPlayerService {
     return await this.musicQueueService.getQueue();
   }
 
-  /**
-   * Called when bot has been kicked/left from the voice channel
-   * and user want to bring him back.
-   *
-   * If there was a song currently played - resume playing it
-   * If there wasn't a song played - checkQueue
-   */
   async startAgain() {
     if (!this.currentSong) {
       await this.checkQueue();

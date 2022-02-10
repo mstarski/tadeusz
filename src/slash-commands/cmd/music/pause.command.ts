@@ -3,12 +3,12 @@ import { slashCommandRepository } from "../../index";
 import { CommandInteraction } from "discord.js";
 import { MusicPlayerService } from "../../../music/music-player.service";
 import { NoMusicError } from "../../../errors/music.errors";
-import { MessageAPI } from "../../../typedefs/discord";
+import { IMessagingService } from "../../../typedefs/discord";
 
 export class PauseCommand extends SlashCommand {
   constructor(
     private readonly musicPlayerService: MusicPlayerService,
-    private readonly messagingService: MessageAPI
+    private readonly messagingService: IMessagingService
   ) {
     super("pause", "Pause current song", [], slashCommandRepository);
   }

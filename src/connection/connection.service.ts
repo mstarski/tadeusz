@@ -9,30 +9,12 @@ import {
   InternalDiscordGatewayAdapterCreator,
 } from "discord.js";
 import { ConnectionToVoiceChatNotFoundError } from "../errors/common.errors";
+import { IConnectionService } from "../typedefs/connection";
 
-export class ConnectionService {
-  /**
-   * Discord client
-   * @private
-   */
+export class ConnectionService implements IConnectionService {
   client: Client;
-
-  /**
-   * User that invokes the current interaction
-   * @private
-   */
   currentUser: GuildMember;
-
-  /**
-   * Id of a channel where user that executes command sits in
-   * @private
-   */
   channelId: string;
-
-  /**
-   * Id of a guild where the bot is being used in
-   * @private
-   */
   guildId: string;
 
   voiceAdapterCreator: InternalDiscordGatewayAdapterCreator;

@@ -11,8 +11,6 @@ import { SkipCommand } from "./cmd/music/skip.command";
 import { messagingService } from "../messaging";
 import { GetMusicQueueCommand } from "./cmd/music/get-music-queue.command";
 import { JoinVoiceCommand } from "./cmd/music/join-voice.command";
-import { createAudioPlayer } from "@discordjs/voice";
-import { AudioAPI } from "../typedefs/music";
 
 // Repositories
 export const slashCommandRepository = new SlashCommandsRepository();

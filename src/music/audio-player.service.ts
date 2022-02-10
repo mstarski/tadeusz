@@ -1,16 +1,16 @@
-import { AudioAPI } from "../typedefs/music";
+import { IAudioAPI, IAudioPlayerService } from "../typedefs/music";
 import {
   AudioPlayer,
   AudioPlayerStatus,
   AudioResource,
   VoiceConnectionStatus,
 } from "@discordjs/voice";
-import { ConnectionService } from "../connection/connection.service";
+import { IConnectionService } from "../typedefs/connection";
 
-export class AudioPlayerService {
+export class AudioPlayerService implements IAudioPlayerService {
   constructor(
-    private readonly connectionService: ConnectionService,
-    private readonly audioPlayer: AudioAPI
+    private readonly connectionService: IConnectionService,
+    private readonly audioPlayer: IAudioAPI
   ) {}
 
   public ensureVoiceChatConnection() {
@@ -28,8 +28,6 @@ export class AudioPlayerService {
   }
 
   public registerAction(status, listener) {
-    console.log(status, listener);
-
     this.audioPlayer.on(status, listener);
   }
 

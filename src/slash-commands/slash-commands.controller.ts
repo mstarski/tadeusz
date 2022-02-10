@@ -2,7 +2,7 @@ import { CommandInteraction, GuildMember } from "discord.js";
 import { Controller, IControllerConfig } from "../utils/controller";
 import { SlashCommandsRepository } from "./slash-commands.repository";
 import { ConnectionService } from "../connection/connection.service";
-import { MessageAPI } from "../typedefs/discord";
+import { IMessagingService } from "../typedefs/discord";
 import { random as randomEmoji } from "node-emoji";
 
 export class SlashCommandsController extends Controller {
@@ -10,7 +10,7 @@ export class SlashCommandsController extends Controller {
     props: IControllerConfig,
     private readonly slashCommandRepository: SlashCommandsRepository,
     private readonly connectionService: ConnectionService,
-    private readonly messagingService: MessageAPI
+    private readonly messagingService: IMessagingService
   ) {
     super(props);
   }
