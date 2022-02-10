@@ -5,7 +5,7 @@ import { MusicPlayerService } from "../../../music/music-player.service";
 import { YoutubeLink } from "../../../music/youtube-link";
 import { bold, underline } from "../../../utils/markdown";
 import { UNKNOWN_ERROR_CHAT_MESSAGE } from "../../../utils/const";
-import { MessageAPI } from "../../../typedefs/discord";
+import { IMessagingService } from "../../../typedefs/discord";
 
 export class PlayCommand extends SlashCommand {
   private readonly errorMap = {
@@ -15,7 +15,7 @@ export class PlayCommand extends SlashCommand {
 
   constructor(
     private readonly musicPlayerService: MusicPlayerService,
-    private readonly messagingService: MessageAPI
+    private readonly messagingService: IMessagingService
   ) {
     super(
       "play",

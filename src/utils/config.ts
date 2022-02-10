@@ -1,5 +1,5 @@
 import { Expose, plainToClass } from "class-transformer";
-import { validateSync } from "class-validator";
+import { IsDefined, validateSync } from "class-validator";
 import { ConfigCreationError } from "../errors/config.errors";
 
 require("dotenv").config();
@@ -19,6 +19,10 @@ class Config {
 
   @Expose()
   RIOT_API_URL: string;
+
+  @Expose()
+  @IsDefined()
+  MONGO_URL: string;
 
   constructor() {
     // Do not create config using the `new` keyword.

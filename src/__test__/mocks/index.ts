@@ -5,16 +5,19 @@ import {
   GuildMember,
   InternalDiscordGatewayAdapterCreator,
 } from "discord.js";
-import {
-  AudioPlayerStatus,
-  AudioResource,
-  VoiceConnection,
-} from "@discordjs/voice";
-import { AudioAPI } from "../../typedefs/music";
-import { MessageAPI } from "../../typedefs/discord";
+import { AudioPlayerStatus, VoiceConnection } from "@discordjs/voice";
+import { IMessagingService } from "../../typedefs/discord";
 import { YoutubeLink } from "../../music/youtube-link";
+import { Song } from "../../music/song";
 
-export class MockYoutubeService {
+import { IConnectionService } from "../../typedefs/connection";
+import {
+  IAudioPlayerService,
+  IMusicQueueService,
+  IYoutubeService,
+} from "../../typedefs/music";
+
+export class MockYoutubeService implements IYoutubeService {
   getInfo = jest.fn(
     async (link: YoutubeLink) =>
       ({
@@ -35,7 +38,7 @@ export class MockYoutubeService {
   });
 }
 
-export class MockConnectionService {
+export class MockConnectionService implements IConnectionService {
   client = {} as Client;
   currentUser = {} as GuildMember;
   channelId = "123";
@@ -48,36 +51,53 @@ export class MockConnectionService {
   isUserOnVoiceChat = jest.fn(() => true);
 }
 
-export class MockMessagingService implements MessageAPI {
+export class MockMessagingService implements IMessagingService {
   sendMessage = jest.fn(async () => {});
   sendDefaultErrorMessage = jest.fn(async () => {});
 }
 
-export class MockAudioPlayer implements AudioAPI {
-  addListener = jest.fn();
+export class MockAudioPlayerService implements IAudioPlayerService {
+  state = { status: AudioPlayerStatus.Idle } as any;
 
-  on = jest.fn();
+  ensureVoiceChatConnection() {}
 
-  unpause() {
+  unpausePlayer() {
     this.state.status = AudioPlayerStatus.Playing;
     return true;
   }
 
-  stop(force?: boolean) {
-    this.state.status = AudioPlayerStatus.Idle;
-    return true;
-  }
-
-  play(resource: AudioResource) {
-    this.state.status = AudioPlayerStatus.Playing;
-  }
-
-  pause(interpolateSilence: boolean) {
+  pausePlayer() {
     this.state.status = AudioPlayerStatus.Paused;
     return true;
   }
 
-  state = { status: AudioPlayerStatus.Idle } as any;
+  registerAction(_status, _listener) {}
 
-  playable = [] as VoiceConnection[];
+  playPlayer() {
+    this.state.status = AudioPlayerStatus.Playing;
+  }
+
+  getPlayerStatus() {
+    return this.state.status;
+  }
+}
+
+export class MockMusicQueueService implements IMusicQueueService {
+  private queue: Song[] = [];
+
+  async getQueue() {
+    return this.queue;
+  }
+
+  async getQueueLength() {
+    return this.queue.length;
+  }
+
+  async dequeue() {
+    return this.queue.shift();
+  }
+
+  async enqueue(song: Song) {
+    this.queue.push(song);
+  }
 }
