@@ -12,7 +12,7 @@ export class YoutubeService implements IYoutubeService {
 
   async download(song: Song) {
     try {
-      return ytdl(song.url.value, { highWaterMark: 1 << 25 });
+      return ytdl(song.url.value, { highWaterMark: 1 << 27 });
     } catch {
       throw new YoutubeDownloadError(
         `Couldn't download this song: ${song.title}`
