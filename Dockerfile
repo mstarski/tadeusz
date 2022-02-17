@@ -1,4 +1,4 @@
-FROM node:14.19-alpine3.14 as build
+FROM node:16.14-alpine3.14 as build
 
 LABEL "maintainer.name"="Michał Starski"
 LABEL "maintainer.email"="michal.starski<at>pm.me"
@@ -10,7 +10,7 @@ COPY . .
 RUN yarn install --frozen-lockfile --ignore-engines
 RUN yarn build
 
-FROM node:14.19-alpine3.14 as dist
+FROM node:16.14-alpine3.14 as dist
 
 WORKDIR /app
 
