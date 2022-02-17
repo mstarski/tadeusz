@@ -7,7 +7,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN yarn install --frozen-lockfile
+RUN yarn install --frozen-lockfile --ignore-engines
 RUN yarn build
 
 FROM node:14.19-alpine3.14 as dist
