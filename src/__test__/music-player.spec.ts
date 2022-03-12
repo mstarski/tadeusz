@@ -113,6 +113,18 @@ describe("Music player functionalities", () => {
 
       expect(await musicPlayer.getQueue()).toHaveLength(0);
     });
+
+    it("should be able to clear the queue completely", async () => {
+      await musicPlayer.play(sampleLink);
+      await musicPlayer.play(sampleLink2);
+      await musicPlayer.play(sampleLink);
+      await musicPlayer.play(sampleLink2);
+      await musicPlayer.play(sampleLink);
+      await musicPlayer.play(sampleLink2);
+      await musicPlayer.clear();
+
+      expect(await musicPlayer.getQueue()).toHaveLength(0);
+    });
   });
 
   describe("Pausing & unpausing", () => {

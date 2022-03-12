@@ -83,6 +83,10 @@ export class MusicPlayerService implements IMusicPlayerService {
     }
   }
 
+  async clear() {
+    return this.musicQueueService.clearQueue();
+  }
+
   private async enqueueSong(song: Song) {
     await this.musicQueueService.enqueue(song);
 

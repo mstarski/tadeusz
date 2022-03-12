@@ -35,6 +35,7 @@ export interface IMusicQueueService {
   getQueueLength: () => Promise<number>;
   dequeue: () => Promise<Song>;
   enqueue: (song: Song) => Promise<void>;
+  clearQueue: () => Promise<void>;
 }
 
 export interface IMusicPlayerService {
@@ -42,6 +43,7 @@ export interface IMusicPlayerService {
   pause: () => Promise<void>;
   unpause: () => Promise<void>;
   skip: () => Promise<void>;
+  clear: () => Promise<void>;
 
   /**
    * Called when bot has been kicked/left from the voice channel

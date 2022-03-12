@@ -100,4 +100,8 @@ export class MockMusicQueueService implements IMusicQueueService {
   async enqueue(song: Song) {
     this.queue.push(song);
   }
+
+  async clearQueue() {
+    this.queue = [];
+  }
 }
