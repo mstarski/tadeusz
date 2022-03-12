@@ -129,7 +129,6 @@ export class MusicPlayerService implements IMusicPlayerService {
         await this.messagingService.sendMessage(error.message);
       } else {
         console.log(error);
-
         await this.messagingService.sendDefaultErrorMessage();
       }
     }

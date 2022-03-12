@@ -7,7 +7,13 @@ import { IYoutubeService } from "../typedefs/music";
 
 export class YoutubeService implements IYoutubeService {
   async getInfo(link: YoutubeLink): Promise<videoInfo | null> {
-    return ytdl.getBasicInfo(link.value);
+    try {
+      return ytdl.getBasicInfo(link.value);
+    } catch {
+      throw new YoutubeDownloadError(
+        `Couldn't fetch info for video at: ${link.value}`
+      );
+    }
   }
 
   async download(song: Song) {
