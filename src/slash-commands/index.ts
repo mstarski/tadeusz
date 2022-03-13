@@ -11,6 +11,7 @@ import { SkipCommand } from "./cmd/music/skip.command";
 import { messagingService } from "../messaging";
 import { GetMusicQueueCommand } from "./cmd/music/get-music-queue.command";
 import { JoinVoiceCommand } from "./cmd/music/join-voice.command";
+import { ClearCommand } from "./cmd/music/clear.command";
 
 // Repositories
 export const slashCommandRepository = new SlashCommandsRepository();
@@ -49,4 +50,8 @@ export const musicQueueCommand = new GetMusicQueueCommand(
 export const joinVoiceCommand = new JoinVoiceCommand(
   audioPlayerService,
   musicPlayerService
+);
+export const clearCommand = new ClearCommand(
+  musicPlayerService,
+  messagingService
 );

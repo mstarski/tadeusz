@@ -83,6 +83,10 @@ export class MusicPlayerService implements IMusicPlayerService {
     }
   }
 
+  async clear() {
+    return this.musicQueueService.clearQueue();
+  }
+
   private async enqueueSong(song: Song) {
     await this.musicQueueService.enqueue(song);
 
@@ -125,7 +129,6 @@ export class MusicPlayerService implements IMusicPlayerService {
         await this.messagingService.sendMessage(error.message);
       } else {
         console.log(error);
-
         await this.messagingService.sendDefaultErrorMessage();
       }
     }

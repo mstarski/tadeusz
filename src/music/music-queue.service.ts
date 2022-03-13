@@ -23,4 +23,8 @@ export class MusicQueueService implements IMusicQueueService {
     const songEntity = songFactory.fromModel(song);
     await songEntity.save();
   }
+
+  async clearQueue(): Promise<void> {
+    await SongEntity.deleteMany({}).exec();
+  }
 }
