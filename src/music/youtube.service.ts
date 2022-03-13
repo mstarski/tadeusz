@@ -17,12 +17,23 @@ export class YoutubeService implements IYoutubeService {
   }
 
   async download(song: Song) {
-    try {
-      return ytdl(song.url.value, { highWaterMark: 1 << 27 });
-    } catch {
+    const stream = await ytdl(song.url.value, {
+      highWaterMark: 1 << 27,
+      filter: "audioonly",
+    });
+
+    // Overwrite breaking error listener
+    const ogErrorHandler = stream.listeners("error")[2];
+    stream.removeListener("error", ogErrorHandler as any);
+
+    stream.on("error", (err) => {
+      stream.destroy();
+
       throw new YoutubeDownloadError(
-        `Couldn't download this song: ${song.title}`
+        `Couldn't download this song: ${song.title} ${err}`
       );
-    }
+    });
+
+    return stream;
   }
 }
