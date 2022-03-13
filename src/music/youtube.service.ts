@@ -23,8 +23,7 @@ export class YoutubeService implements IYoutubeService {
     });
 
     // Overwrite breaking error listener
-    const ogErrorHandler = stream.listeners("error")[2];
-    stream.removeListener("error", ogErrorHandler as any);
+    stream.removeAllListeners("error");
 
     stream.on("error", (err) => {
       stream.destroy();
